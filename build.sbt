@@ -2,7 +2,8 @@ scalaVersion := "2.12.3"
 
 libraryDependencies ++= Seq(
   "com.sksamuel.scrimage" %% "scrimage-core" % "2.1.8",
-  "io.circe" %% "circe-core" % "0.8.0"
+  "io.circe" %% "circe-core" % "0.8.0",
+  "org.scalaj" %% "scalaj-http" % "2.3.0"
 )
 
 scalacOptions ++= Seq(

@@ -2,14 +2,20 @@ package firstOrc
 
 import com.sksamuel.scrimage.Image
 import com.sksamuel.scrimage.Pixel
-import java.nio.charset.StandardCharsets.UTF_8
 import io.circe.Json
 import io.circe.syntax.EncoderOps
+import java.nio.charset.StandardCharsets.UTF_8
+import java.nio.file.Files
+import java.nio.file.Paths
+import scalaj.http.Http
+import scalaj.http.HttpResponse
 
 object Main {
   def main(args: Array[String]): Unit = {
     val pixels = buildFontPixels()
-    outputImage(pixels)
+    val requestBytes = packImage(pixels)
+    val response = sendRequest(requestBytes)
+    handleResponse(response)
   }
 
   val paddedSize = Glyph.size + 2
@@ -102,11 +108,29 @@ object Main {
 
   val filledPixel = convertValue(0)
 
-  def outputImage(pixels: Seq[Pixel]): Unit = {
+  def packImage(pixels: Seq[Pixel]): Array[Byte] = {
     val height = pixels.length / paddedSize
     val image = Image(paddedSize, height, pixels.toArray)
-    image.output("hi.png")
-    val bytes = image.bytes
-    println(bytes.length)
+    image.bytes
+  }
+
+  def sendRequest(requestBytes: Array[Byte]): HttpResponse[Array[Byte]] =
+    Http("http://127.0.0.1:5000/compile-to-otf")
+      .postData(requestBytes)
+      .asBytes
+
+  def handleResponse(response: HttpResponse[Array[Byte]]): Unit = {
+    require(response.isSuccess, s"Successful request ${response}")
+    val contentDispositionOption = response.header("Content-Disposition")
+    require(contentDispositionOption.nonEmpty, s"Content-Disposition header ${response}")
+    val filename = contentDispositionOption.get.replaceFirst("^.*=", "")
+    val bytes = response.body
+    writeBytes(filename, bytes)
+    println(s"Written ${bytes.length} bytes to ${filename}")
+  }
+
+  def writeBytes(filename: String, bytes: Array[Byte]): Unit = {
+    val path = Paths.get(filename)
+    Files.write(path, bytes)
   }
 }
