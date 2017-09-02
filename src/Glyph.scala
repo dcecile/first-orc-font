@@ -1,6 +1,16 @@
 package firstOrc
 
-final case class Glyph(char: Char, bits: Seq[Seq[Boolean]], flexs: Seq[Int])
+final case class Glyph(
+  char: Char,
+  bits: Seq[Seq[Boolean]],
+  flexs: Seq[Int]
+) {
+  lazy val tallBits: Seq[Seq[Boolean]] =
+    bits.zip(flexs)
+      .flatMap({ case (bitRow, flex) =>
+        Seq.fill(flex)(bitRow)
+      })
+}
 
 object Glyph {
   val size = 6
