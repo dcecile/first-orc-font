@@ -1,6 +1,6 @@
 package firstOrc
 
-final case class Glyph(char: Char, bits: Seq[Seq[Double]], flexs: Seq[Int])
+final case class Glyph(char: Char, bits: Seq[Seq[Boolean]], flexs: Seq[Int])
 
 object Glyph {
   val size = 6
@@ -31,8 +31,8 @@ object Glyph {
       .map(row => (0 until (size * 2) by 2)
         .map(row(_))
         .map(_ match {
-          case '[' => 1.0
-          case ' ' => 0.0
+          case '[' => true
+          case ' ' => false
         }))
     Glyph(char, bits, flexs)
   }
