@@ -2,6 +2,7 @@ package firstOrc
 
 import com.sksamuel.scrimage.Image
 import com.sksamuel.scrimage.Pixel
+import com.sksamuel.scrimage.nio.PngWriter
 import io.circe.Json
 import io.circe.syntax.EncoderOps
 import java.nio.charset.StandardCharsets.UTF_8
@@ -130,7 +131,7 @@ object Main {
   def packImage(pixels: Seq[Pixel]): Array[Byte] = {
     val height = pixels.length / paddedWidth
     val image = Image(paddedWidth, height, pixels.toArray)
-    image.bytes
+    image.bytes(PngWriter.MaxCompression)
   }
 
   def sendRequest(requestBytes: Array[Byte]): HttpResponse[Array[Byte]] =
