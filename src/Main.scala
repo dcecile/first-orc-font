@@ -136,6 +136,7 @@ object Main {
 
   def sendRequest(requestBytes: Array[Byte]): HttpResponse[Array[Byte]] =
     Http("http://127.0.0.1:5000/compile-to-otf")
+      .timeout(connTimeoutMs = 1000, readTimeoutMs = 10000)
       .postData(requestBytes)
       .asBytes
 
