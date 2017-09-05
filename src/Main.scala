@@ -5,37 +5,73 @@ import com.sksamuel.scrimage.Pixel
 import com.sksamuel.scrimage.nio.PngWriter
 import io.circe.Json
 import io.circe.syntax.EncoderOps
+import java.io.File
 import java.nio.charset.StandardCharsets.UTF_8
-import java.nio.file.Files
-import java.nio.file.Paths
+import org.zeroturnaround.zip.ByteSource
+import org.zeroturnaround.zip.FileSource
+import org.zeroturnaround.zip.ZipEntrySource
+import org.zeroturnaround.zip.ZipUtil
 import scalaj.http.Http
 import scalaj.http.HttpResponse
 
 object Main {
   def main(args: Array[String]): Unit = {
-    buildFont(Config(
-      name = "Short",
-      bits = _.bits,
-      heightChange = _ * 1))
-    buildFont(Config(
-      name = "Tall",
-      bits = _.tallBits,
-      heightChange = _ * 2))
+    val files = prepareFiles()
+    val output = s"${Config.basePath}.zip"
+    ZipUtil.pack(files.toArray, new File(output))
+    println(s"Zipped to '${output}'")
   }
 
+  def prepareFiles(): Seq[ZipEntrySource] =
+    Seq(
+      buildFont(Config(
+        variant = "Short",
+        bits = _.bits,
+        heightChange = _ * 1)),
+      buildFont(Config(
+        variant = "Tall",
+        bits = _.tallBits,
+        heightChange = _ * 2)),
+      Seq(
+        new FileSource(
+          Config.getPathForFile("README.txt"),
+          new File("USAGE.md")),
+        new FileSource(
+          Config.getPathForFile("LICENSE.txt"),
+          new File("LICENSE.md")))).flatten
+
   final case class Config(
-    name: String,
+    variant: String,
     bits: Glyph => Seq[Seq[Boolean]],
     heightChange: Int => Int
   ) {
-    def paddedHeight = heightChange(Glyph.size) + 2
+    val familyName = s"${Config.baseName} ${variant}"
+    val paddedHeight = heightChange(Glyph.size) + 2
+    val postscriptFontName =
+      s"${familyName.replace(" ", "")}-${Config.styleName}"
+    def getPathForExtension(extension: String): String =
+      Config.getPathForFile(s"${postscriptFontName}.${extension}")
   }
 
-  def buildFont(implicit config: Config) {
+  object Config {
+    val baseName = "First Orc"
+    val styleName = "Regular"
+    val majorVersion = 0
+    val minorVersion = 1
+    val basePath =
+      f"${baseName} v${majorVersion}.${minorVersion}%03d".replace(" ", "_")
+    def getPathForFile(filename: String): String =
+      s"${basePath}/${filename}"
+  }
+
+  def buildFont(implicit config: Config): Seq[ByteSource] = {
+    println(s"Building '${config.variant}' font")
     val pixels = buildFontPixels()
-    val requestBytes = packImage(pixels)
-    val response = sendRequest(requestBytes)
-    handleResponse(response)
+    val imageBytes = packImage(pixels)
+    Seq(
+      new ByteSource(config.getPathForExtension("png"), imageBytes),
+      compileFont(imageBytes, "otf"),
+      compileFont(imageBytes, "ttf"))
   }
 
   val paddedWidth = Glyph.size + 2
@@ -56,14 +92,14 @@ object Main {
     implicit def intToJson: Int => Json = _.asJson
     implicit def booleanToJson: Boolean => Json = _.asJson
     Json.obj(
-      ("f", s"First Orc ${config.name}"),
-      ("s", "Regular"),
+      ("f", config.familyName),
+      ("s", Config.styleName),
       ("w", 400),
       ("d", "Dan Cecile"),
       ("du", "https://dcecile.github.io/first-orc-font"),
       ("c", "2017"),
-      ("mj", 0),
-      ("mn", 1),
+      ("mj", Config.majorVersion),
+      ("mn", Config.minorVersion),
       ("o", true))
   }
 
@@ -134,24 +170,38 @@ object Main {
     image.bytes(PngWriter.MaxCompression)
   }
 
-  def sendRequest(requestBytes: Array[Byte]): HttpResponse[Array[Byte]] =
-    Http("http://127.0.0.1:5000/compile-to-otf")
-      .timeout(connTimeoutMs = 1000, readTimeoutMs = 10000)
-      .postData(requestBytes)
-      .asBytes
-
-  def handleResponse(response: HttpResponse[Array[Byte]]): Unit = {
-    require(response.isSuccess, s"Successful request ${response}")
-    val contentDispositionOption = response.header("Content-Disposition")
-    require(contentDispositionOption.nonEmpty, s"Content-Disposition header ${response}")
-    val filename = contentDispositionOption.get.replaceFirst("^.*=", "")
-    val bytes = response.body
-    writeBytes(filename, bytes)
-    println(s"Written ${bytes.length} bytes to ${filename}")
+  def compileFont(
+    imageBytes: Array[Byte],
+    extension: String
+  )(
+    implicit config: Config
+  ): ByteSource = {
+    val response = sendRequest(imageBytes, extension)
+    val responseBytes = handleResponse(response)
+    println(s"Got ${extension.toUpperCase} font")
+    new ByteSource(
+      config.getPathForExtension(extension),
+      responseBytes)
   }
 
-  def writeBytes(filename: String, bytes: Array[Byte]): Unit = {
-    val path = Paths.get(filename)
-    Files.write(path, bytes)
+  def sendRequest(
+    requestBytes: Array[Byte],
+    extension: String
+  ): HttpResponse[Array[Byte]] = {
+    val uri = s"${bitFontMakeHost}/compile-to-${extension}"
+    println(s"Sending request to ${uri}")
+    Http(uri)
+      .timeout(connTimeoutMs = 1000, readTimeoutMs = 20000)
+      .postData(requestBytes)
+      .asBytes
+  }
+
+  val bitFontMakeHost = "http://127.0.0.1:5000"
+
+  def handleResponse(
+    response: HttpResponse[Array[Byte]]
+  ): Array[Byte] = {
+    require(response.isSuccess, s"Successful request ${response}")
+    response.body
   }
 }
