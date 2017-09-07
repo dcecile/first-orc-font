@@ -1,9 +1,9 @@
-# First Orc (font)
+# [First Orc (font)](https://dcecile.github.io/first-orc-font/)
 _A 6x6 pixel font for [Off-Grid Orcs](https://github.com/dcecile/off-grid-orcs)_
 
 ## Usage
 
-Download the [latest release](https://github.com/dcecile/first-orc-font/releases)
+Download the [latest release](https://github.com/dcecile/first-orc-font/releases/latest)
 to get the OTF/TTF files, and follow the instructions in [USAGE.md](USAGE.md).
 
 ## Example
@@ -11,6 +11,10 @@ to get the OTF/TTF files, and follow the instructions in [USAGE.md](USAGE.md).
 Here's how the font looks:
 
 ![Screenshot](screenshot.png?raw=true "Off-Grid Orcs screenshot")
+
+For a live demo of the font, visit the homepage:
+
+> https://dcecile.github.io/first-orc-font/
 
 ## Developing
 
