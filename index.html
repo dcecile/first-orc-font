@@ -7,25 +7,235 @@
     <style>
     @font-face {
       font-family: 'First Orc Short';
-      src: url(FirstOrcShort-Regular.otf);
+      font-weight: 400;
+      src: url(FirstOrcShort-Regular.ttf);
     }
     @font-face {
       font-family: 'First Orc Tall';
-      src: url(FirstOrcTall-Regular.otf);
+      font-weight: 400;
+      src: url(FirstOrcTall-Regular.ttf);
+    }
+    html {
+      background: #ddd;
     }
     body {
+      background: white;
       font-family: 'First Orc Short';
       font-size: 12px;
       text-transform: uppercase;
+      margin: 12px 12px;
+      padding: 18px 24px;
+      max-width: 400px;
+      border: 2px solid #555;
+      color: #555;
+      box-shadow: 4px 4px 0 0 #76b389;
+      cursor: default;
+    }
+    body.option-caps-off {
+      text-transform: none;
     }
     h1 {
       font-family: 'First Orc Tall';
+      font-size: 36px;
+      font-weight: normal;
+      color: #000;
+      text-shadow: 2px 2px 0px #7dd699;
+      margin: 0 0 12px;
+      padding: 0;
+    }
+    p {
+      margin: 0 0 12px;
+      padding: 0;
+    }
+    p:last-of-type {
+      margin-bottom: 0;
+    }
+    body a {
+      text-decoration: none;
+      color: #644ede;
+      box-shadow: inset 0 -2px 0 0 #644ede;
+    }
+    body a:hover {
+      color: #8d81d4;
+      box-shadow: inset 0 -2px 0 0 #8d81d4;
+    }
+    button {
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      font-family: inherit;
+      text-transform: inherit;
+      font-size: inherit;
+    }
+    .download {
+      margin: 16px 12px;
+    }
+    .download a.button {
+      display: inline-block;
+      padding: 4px 6px;
+      border: 2px solid #1e0d7b;
+      margin-bottom: 14px;
+      color: #fff;
+      background: #715bea;
+      box-shadow: 2px 2px 0 0 #afa7dc;
+    }
+    .download a.button:hover {
+      background: #9f94e4;
+      border-color: #6455b9;
+      box-shadow: 2px 2px 0 0 #c0b9e6;
+    }
+    .download a.link {
+      margin-left: 6px;
+    }
+    .demo {
+      margin-left: 12px;
+      color: #1dad4a;
+      border-left: 4px solid #1dad4a;
+      padding: 6px;
+      cursor: text;
+      background: #e9fff0;
+      outline: none;
+    }
+    .demo:hover, .demo:focus {
+      color: #1bce52;
+      border-left-color: #1bce52;
+    }
+    .demo:focus {
+      background: #f5fff8;
+    }
+    body.option-size-3x .demo {
+      font-size: 18px;
+      border-left-width: 6px;
+      padding: 9px;
+    }
+    body.option-size-4x .demo {
       font-size: 24px;
+      border-left-width: 8px;
+      padding: 12px;
+    }
+    body.option-height-off .demo {
+      font-family: 'First Orc Tall';
+      font-size: 24px;
+    }
+    body.option-height-off.option-size-3x .demo {
+      font-size: 36px;
+    }
+    body.option-height-off.option-size-4x .demo {
+      font-size: 48px;
+    }
+    .options {
+      margin-left: 8px;
+      color: #8d81d4;
+      padding-left: 6px;
+    }
+    .options span {
+      cursor: pointer;
+    }
+    .options span:hover {
+      color: #b2a9ec;
+    }
+    .break {
+      margin-top: 24px;
     }
     </style>
   </head>
   <body>
     <h1>First Orc (font)</h1>
-    <p>Download the <a href="https://github.com/dcecile/first-orc-font/releases">latest release</a> to get started.</p>
+    <p>
+      A 6x6 pixel font for retro
+      video&shy;games, hacker book&shy;shop
+      names, and outland&shy;ish
+      main&shy;frames.
+    </p>
+    <p>Download the font:</p>
+    <div class="download">
+      <a class="button" href="https://github.com/dcecile/first-orc-font/releases/download/v0.001/First_Orc_v0.001.zip">First_Orc_v0.001.zip</a>
+      <a class="link" href="https://github.com/dcecile/first-orc-font/releases/tag/v0.001">(release notes)</a>
+    </div>
+    <p>Try out the glyphs:</p>
+    <p contenteditable="true" class="demo" id="demo-panagram">
+      The five boxing wizards jump quickly.
+    </p>
+    <p contenteditable="true" class="demo" id="demo-extra">
+      0123456789
+      +-*/=_%
+      ,.;:?!
+      \'"&lsquo;&rsquo;&ldquo;&rdquo;
+      ()[]{}&lt;&gt;
+      `~@#$^&amp;|
+    </p>
+    <p class="options">
+      <span id="option-caps">Caps</span>
+      <span id="option-size">Size</span>
+      <span id="option-height">Height</span>
+      <span id="option-panagram">Panagram</span>
+      <span id="option-reset">Reset</span>
+    </p>
+    <p class="break">******</p>
+    <p>
+      This font was created by
+      <a href="https://twitter.com/dancecile">Dan&nbsp;Cecile</a> for a #LOWREZJAM 2017 game: <a href="https://github.com/dcecile/off-grid-orcs">Off-Grid Orcs</a>.
+    </p>
+    <p>
+      Full Scala source code is available on <a href="https://github.com/dcecile/first-orc-font">GitHub</a>.
+    </p>
+    <script language="javascript">
+      function addHandler(name, handler) {
+        document.getElementById('option-' + name).onclick = handler
+      }
+      var options = {}
+      function addToggle(name, toggles) {
+        toggles = toggles || [ 'on', 'off' ]
+        function getClass(i) {
+          return 'option-' + name + '-' + toggles[i]
+        }
+        addHandler(name, function () {
+          var classList = document.body.classList
+          var previous = options[name] || 0
+          var current = (previous + 1) % toggles.length
+          options[name] = current
+          classList.remove(getClass(previous))
+          classList.add(getClass(current))
+        })
+      }
+      function getDemoText(name) {
+        return document.getElementById('demo-' + name).textContent
+      }
+      function setDemoText(name, text) {
+        document.getElementById('demo-' + name).textContent = text
+      }
+      addToggle('caps')
+      addToggle('size', [
+        '2x',
+        '3x',
+        '4x'
+      ])
+      addToggle('height')
+      var panagrams = [
+        getDemoText('panagram'),
+        'A quick brown fox jumps over the lazy dog.',
+        'Squdgy fez, blank jimp crwth vox!',
+        'Five quacking zephyrs jolt my wax bed.',
+        'Amazingly few discotheques provide jukeboxes.',
+        'Sphinx of black quartz, judge my vow!',
+        'A very bad quack might jinx zippy fowls.',
+        'When zombies arrive, quickly fax judge Pat.'
+      ]
+      var extra = getDemoText('extra')
+      addHandler('panagram', function () {
+        var previous = options['panagram'] || 0
+        var current = (previous + 1) % panagrams.length
+        options['panagram'] = current
+        setDemoText('panagram', panagrams[current])
+      })
+      addHandler('reset', function () {
+        options = {}
+        document.body.className = ""
+        setDemoText('panagram', panagrams[0])
+        setDemoText('extra', extra)
+      })
+    </script>
   </body>
 </html>
