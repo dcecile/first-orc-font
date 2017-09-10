@@ -4,7 +4,7 @@ _A 6x6 pixel font for [Off-Grid Orcs](https://github.com/dcecile/off-grid-orcs)_
 ## Usage
 
 Download the [latest release](https://github.com/dcecile/first-orc-font/releases/latest)
-to get the OTF/TTF files, and follow the instructions in [USAGE.md](USAGE.md).
+to get the TTF files, and follow the instructions in [USAGE.md](USAGE.md).
 
 ## Example
 
@@ -28,7 +28,7 @@ library dependencies).
 
 Here are some important `sbt` commands:
 
-- `run` (to compile the font into OTF files)
+- `run` (to compile the font into TTF files)
 
 ## License
 

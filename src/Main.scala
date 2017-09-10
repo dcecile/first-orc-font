@@ -57,7 +57,7 @@ object Main {
     val baseName = "First Orc"
     val styleName = "Regular"
     val majorVersion = 0
-    val minorVersion = 1
+    val minorVersion = 2
     val basePath =
       f"${baseName} v${majorVersion}.${minorVersion}%03d".replace(" ", "_")
     def getPathForFile(filename: String): String =
@@ -70,7 +70,6 @@ object Main {
     val imageBytes = packImage(pixels)
     Seq(
       new ByteSource(config.getPathForExtension("png"), imageBytes),
-      compileFont(imageBytes, "otf"),
       compileFont(imageBytes, "ttf"))
   }
 

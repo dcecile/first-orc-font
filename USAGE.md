@@ -4,17 +4,15 @@ _A 6x6 pixel font for [Off-Grid Orcs](https://github.com/dcecile/off-grid-orcs)_
 ## Files
 
 Thanks for downloading the First Orc font! Included in the ZIP file are
-six different font files:
+four different font files:
 
- - `FirstOrcShort-Regular.otf`: The standard 6x6 font
- - `FirstOrcTall-Regular.otf`: A double-height 6x12 variant of the 6x6 font
- - `FirstOrcShort-Regular.ttf`: (TTF format for software doesn't support OTF)
- - `FirstOrcTall-Regular.ttf`: (TTF format for software doesn't support OTF)
+ - `FirstOrcShort-Regular.ttf`: The standard 6x6 font
+ - `FirstOrcTall-Regular.ttf`: A double-height 6x12 variant of the 6x6 font
  - `FirstOrcShort-Regular.png`: (input file for `bitfontmake`)
  - `FirstOrcTall-Regular.png`: (input file for `bitfontmake`)
 
-After installing the OTF files (or TTF files if required), you should be
-able to select the font as "First Orc Short" or "First Orc Tall".
+After installing the TTF files, you should be able to select the font as
+"First Orc Short" or "First Orc Tall".
 
 ## Metrics
 
